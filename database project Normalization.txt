@@ -1,0 +1,418 @@
+Pay:(C_Id,Name, Gender, Address, Email, Phone_Number,B_Id, 
+Total_Bill,Transaction_Date,Bill_Type)
+
+1NF:Phone_Number Multivalued attribute
+
+2NF:C_Id,Name, Gender, Address, Email, Phone_Number
+    B_Id, Total_Bill,Transaction_Date,Bill_Type
+
+3NF:No transitive dependency
+    C_Id,Name, Gender, Address, Email, Phone_Number
+    B_Id, Total_Bill,Transaction_Date,Bill_Type
+ 
+Tables from Pay:
+9.C_Id,Name, Gender, Address, Email, Phone_Number
+10.C_Id,Phone_Number-Composite PK
+11.B_Id, Total_Bill,Transaction_Date,Bill_Type,C_Id
+
+Order:(C_Id,Name, Gender, Address, Email, Phone_Number, P_Id ,
+Product_Name, Price,Meterial, Amount_in_Inventory )
+
+1NF:Phone_Number Multivalued attribute
+
+2NF:C_Id,Name, Gender, Address, Email, Phone_Number
+    P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+    
+3NF:No transitive dependency
+    C_Id,Name, Gender, Address, Email, Phone_Number
+    P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+ 
+Tables from Order:
+  1.C_Id,Name, Gender, Address, Email, Phone_Number
+  2.C_Id,Phone Number-Composite PK
+  3.P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+  4.O_Id,C_Id,P_Id
+
+
+
+Provide: (S_Id,Name,Address,Join_date,Phone_Number, P_Id ,
+Product_Name, Price,Meterial, Amount_in_Inventory)
+
+1NF:Phone_Number Multivalued attribute
+
+2NF:S_Id,Name,Address,Join_date,Phone_Number
+    P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+
+3NF:No transitive dependency 
+    S_Id,Name,Address,Join_date,Phone_Number
+    P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+
+
+Tables from Provide:
+  5.S_Id,Name,Address,Join_date,Phone_Number
+  6.S_Id,Phone_Number-Composite PK
+  7.P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+  8.Pr_Id,S_Id,P_Id
+
+
+Receive:( B_Id,Total_Bill,Transaction_Date,Bill_Type,Cashier_Id,
+Name,Gender,Address,Phone_Number,)
+
+1NF:Phone_Number Multivalued attribute
+
+2NF:B_Id, Total_Bill,Transaction_Date,Bill_Type,Cashier_Id
+    Cashier_Id,Name,Gender,Address,Phone_Number
+
+3NF:No transitive dependency
+    B_Id, Total_Bill,Transaction_Date,Bill_Type,Cashier_Id
+    Cashier_Id,Name,Gender,Address,Phone_Number
+
+Tables from Receive:
+   12.B_Id, Total_Bill,Transaction_Date,Bill_Type,Cashier_Id
+   13.Cashier_Id,Name,Gender,Address,Phone_Number
+   14.Cashier_Id,Phone_Number-Composite PK
+  
+
+Total Tables:
+     1.C_Id,Name, Gender, Address, Email, Phone_Number
+     2.C_Id,Phone Number-Composite PK
+     3.P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+     4.O_Id,C_Id,P_Id
+     5.S_Id,Name,Address,Join_date,Phone_Number
+     6.S_Id,Phone_Number-Composite PK
+     7.P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+     8.Pr_Id,S_Id,P_Id
+     9.C_Id,Name, Gender, Address, Email, Phone_Number
+    10.C_Id,Phone_Number-Composite PK
+    11.B_Id, Total_Bill,Transaction_Date,Bill_Type,C_Id
+    12.B_Id, Total_Bill,Transaction_Date,Bill_Type,Cashier_Id
+    13.Cashier_Id,Name,Gender,Address,Phone_Number
+    14.Cashier_Id,Phone_Number-Composite PK
+
+Tables after Normalization:
+   
+     1.C_Id,Name, Gender, Address, Email, Phone_Number   
+     2.P_Id , Product_Name, Price,Meterial, Amount_in_Inventory
+     3.O_Id,C_Id,P_Id
+     4.S_Id,Name,Address,Join_date,Phone_Number
+     5.Pr_Id,S_Id,P_Id
+     6.B_Id, Total_Bill,Transaction_Date,Bill_Type,C_Id
+     7.B_Id, Total_Bill,Transaction_Date,Bill_Type,Cashier_Id
+     8.Cashier_Id,Name,Gender,Address,Phone_Number
+    
+
+Table 1:
+
+create table Customer(
+C_Id number(20),
+Name varchar2(30),
+Gender varchar2(10),
+Address varchar2(40),
+Email varchar2(20),
+Phone_Number number(20))
+alter table Customer add constraint Customer_pk primary key(C_Id)
+alter table Customer modify (Name not null)
+alter table Customer add constraint cust_pk unique(email)
+
+desc Customer
+select *
+from customer
+
+
+Table 2:
+create table Product(
+P_Id number(20),
+Product_Name varchar2(30),
+Price number(10),
+Meterial varchar2(30),
+Amount_in_Inventory number(20))
+alter table Product add constraint Product_pk primary key(P_Id)
+desc Product
+
+
+Table 3:
+create table Ordeer(
+O_Id number(20),
+C_Id number(20),
+P_Id number(20))
+alter table Ordeer add constraint Ordeer_pk primary key(O_Id)
+alter table Ordeer add constraint O_fk foreign key(C_Id) references customer(C_Id)
+alter table Ordeer add constraint Or_fk foreign key(P_Id) references product(P_Id)
+
+desc Ordeer
+drop table Ordeer
+
+
+Table 4:
+create table salesman(
+ S_Id number(20),
+ Name varchar(30),
+ Address varchar(40),
+ Join_Date date,
+ Phone_Number number(15))
+alter table salesman add constraint salesman_pk primary key(S_Id)
+create sequence s_seq
+start with 10
+increment by 1
+maxvalue 1000
+nocycle
+nocache
+desc salesman
+
+
+
+
+
+Table 5:
+Create table Provide (
+ Pr_Id number(20),
+ S_Id number(20),
+ P_Id number(20))
+
+alter table Provide add constraint P_pk primary key(Pr_Id)
+alter table Provide add constraint P_fk foreign key(S_Id) references salesman(S_Id)
+alter table Provide add constraint Pv_fk foreign key(P_Id) references Product(P_Id)
+
+desc Provide
+
+
+
+
+
+Table 6:
+drop table Bill
+Create table  Bill (
+ B_Id number(20),
+ Total_Bill number(10),
+ Transaction_Date Date,
+ Bill_Type varchar(30),
+ C_Id number(20))
+alter table Bill add constraint Bill_pk primary key(B_Id)
+
+alter table Bill add constraint B_fk foreign key(C_Id) references customer(C_Id)
+
+select *
+from bill
+desc Bill
+
+
+
+Table 7:
+drop table Bill_Received
+Create table  Bill_Received (
+ B_Id number(20),
+ Total_Bill number(10),
+ Transaction_Date Date,
+ Bill_Type varchar(30),
+ Cashier_Id number(20))
+alter table Bill_Received  add constraint BR_pk primary key(B_Id)
+alter table Bill_Received add constraint C_fk foreign key(Cashier_Id ) references Cashier (Cashier_Id )
+alter table Bill add constraint Bill_pk primary key(B_Id)
+desc Bill_Received
+
+desc Bill_Received
+
+
+
+
+Table 8:
+Create table Cashier (
+ Cashier_Id number(20),
+ Name varchar(30),
+ Gender varchar(10),
+ Address varchar(40),
+ Phone_Number number(15))
+alter table Cashier add constraint Cashier_pk primary key(Cashier_Id )
+desc Cashier
+
+
+
+
+
+
+t-1:insert into Customer values(101,'MD Fahim Attef', 'Male','30/2 
+Mirpur','fahimattef@gmail.com',01777777121)
+insert into Customer values(102,'Ahsanullah', 'Male','25/2 
+Dhanmondi','ahsanul@gmail.com',01777767121)
+insert into Customer values(103,'Ayesha', 'Female','10/9 
+Gulshan','ayesha@gmail.com',01777757121)
+insert into Customer values(104,'Faizul', 'Male',' 2/5
+Uttara','faiaz@gmail.com',01777747121)
+insert into Customer values(105,'Mahdi', 'Male','30/2 
+Mirpur','mahdi@gmail.com',01777737121)
+select *
+from Customer
+
+tb-2
+insert into product values(301,'Pan Cakes',650,'Bakery',26)
+insert into product values(307,'Green forest',90,'Bakery',20)
+insert into product values(303,'GJC Speacial Coffee',1000,'Coffee',22);
+insert into product values(304,'Imported Tea',1200,'Tea',20);
+insert into product values(305,'Piccolo Latte',1500,'Coffee',30)
+select *
+from product
+delete 
+from product
+where P_ID=302
+
+
+tb-3
+insert into ordeer values(01,101,301)
+insert into ordeer values(02,102,303)
+insert into ordeer values(03,103,304)
+insert into ordeer values(04,104,305)
+insert into ordeer values(05,105,307)
+select *
+from Ordeer
+
+tab-04
+insert into salesman(S_Id,Name,Address,Join_Date,Phone_Number) values(s_seq.nextval,'Rumee','286/2B 
+Noakhali',TO_DATE('2021/07/05','yyyy/mm/dd'),01888888812)
+
+insert into salesman(S_Id,Name,Address,Join_Date,Phone_Number) values(s_seq.nextval,'Jack','23/2B 
+Sylhet',TO_DATE('2021/06/05','yyyy/mm/dd'),01888888912)
+
+
+insert into salesman(S_Id,Name,Address,Join_Date,Phone_Number) values(s_seq.nextval,'Rafiq','2/25
+Panchagar',TO_DATE('2021/07/03','yyyy/mm/dd'),01888888512)
+
+insert into salesman(S_Id,Name,Address,Join_Date,Phone_Number) values(s_seq.nextval,'Karim','10/11
+Issordi',TO_DATE('2021/08/10','yyyy/mm/dd'),01888888212)
+
+
+insert into salesman(S_Id,Name,Address,Join_Date,Phone_Number) values(s_seq.nextval,'Gopal','23/25
+Rangpur',TO_DATE('2021/08/05','yyyy/mm/dd'),01888888612)
+select *
+from salesman
+
+tb-05
+insert into provide values(1001,10,301)
+insert into provide values(1002,11,303)
+insert into provide values(1003,12,304)
+insert into provide values(1004,13,305)
+insert into provide values(1005,14,307);
+
+select *
+from provide
+
+
+
+tb-06
+insert into  Bill
+values(2001,1059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',101)
+insert into  Bill
+values(2002,1559,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',102)
+
+insert into  Bill
+values(2003,2059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Card',103)
+
+insert into  Bill
+values(2004,503,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',104)
+
+insert into  Bill
+values(2005,10059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Card',105)
+
+
+table 8:
+insert into Cashier values(1,'Adnan', 'Male','223/8 
+Rangpur',7245517)
+insert into Cashier values(2,'Shuvra', 'Female','223/8 
+Rupnagar',7245817)
+select *
+from Cashier
+
+
+rable-7:
+insert into Bill_Received 
+values(2001,1059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',1)
+insert into  Bill_Received 
+values(2002,1559,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',1)
+insert into  Bill_Received 
+values(2003,2059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Card',2)
+insert into  Bill_Received 
+values(2004,503,TO_DATE('2021/08/08','yyyy/mm/dd'),'Cash',1)
+
+insert into Bill_Received 
+values(2005,10059,TO_DATE('2021/08/08','yyyy/mm/dd'),'Card',2)
+select *
+from Bill_Received 
+
+
+1.Display customer name, gender, total bill and transaction date 
+whose total bill is greater than 1500 and order by transaction 
+date.
+
+select name,gender,total_bill,transaction_date
+from customer,bill
+where customer.c_id=bill.c_id and total_bill>1200
+order by transaction_date
+
+2.Display cashier name, Address, received bill id and bill type 
+who received bill by Bkash
+ 
+select name,address,b_id "Received Bill ID",bill_type
+from cashier, Bill_Received
+where cashier.cashier_id=Bill_Received.cashier_id and bill_type='Bkash'
+
+3.Display customer Id, customer name , Bill id, bill_type who 
+paid before 09-Aug-2021.(Using Natural join)
+
+select c_id,name  "Customer Name",b_id"Bill ID",bill_type
+from customer natural join bill
+where transaction_date<'09-Aug-21'
+
+
+4.. Display customer ID, name , Gender who ordered Green Forest.
+select c_id,name,gender
+from customer
+where c_id in(select c_id
+from ordeer where p_id in(select p_id
+from product
+where product_name='Green forest'))
+
+5.Display Salesman Name, Address, join date who joined after 
+Jack
+
+select name,address,join_date
+from salesman
+where join_date > (select join_date from salesman where name='Jack' )
+
+
+6.List the number of customer according to gender.
+
+select count(c_id),gender
+from customer
+group by gender
+
+7.Display Cashier id and the maximum total bill received by each cashier.
+
+select cashier_id,max(total_bill)
+from bill_received
+group by cashier_id
+
+
+8.Create a view of those products which has more stock in 
+inventory then average stock of a product .
+Ans:
+Create or Replace View View1 AS
+Select Product_Name, Price
+From Product
+Where Amount_in_inventory > (Select 
+avg(Amount_in_inventory) 
+From Product)
+select *
+from View1
+
+9.Display the Received Bill id,Total Bill, Bill Type,Cashier Id and Cashier name by using Cross join
+select b_id,Bill_Received .cashier_id,total_bill,bill_type,name
+from Bill_Received cross join Cashier
+
+10. Display cashier name, Address, Phone number who received 
+bill from Ahsanullah.
+select Name,Address,Phone_number
+from cashier
+where cashier_id in(select cashier_id  
+from Bill_received where b_id in(select b_id
+from bill where c_id=(select c_id 
+from customer
+ where name= 'Ahsanullah')))
